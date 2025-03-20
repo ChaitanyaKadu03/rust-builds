@@ -1,3 +1,5 @@
+use std::io::{stdin};
+
 #[derive(Debug)]
 struct Xorshift128 {
     state1: u64,
@@ -9,16 +11,26 @@ impl Xorshift128 {
         Xorshift128 { state1, state2 }
     }
 
-    fn next(&mut self) {
-        let s1: u64 = self.state1;
-        let s0: u64 = self.state2;
-        self.state1 = s0;
-        self.state2 = s1 ^ (s1 << 23) ^ (s1 >> 17) ^ s0 ^ (s0 >> 26);
+    fn next(&mut self) -> Self {
+        let mut s1: u64 = self.state1;
+        let s2: u64 = self.state2;
+
+        s1 ^= s1 << 23;
+        s1 ^= s1 >> 17;
+        s1 ^= s2;
+        s1 ^= s2 >> 26;
+
+        Xorshift128::new(s2, s1)
     }
 }
 
 fn main() {
     let mut sample: Xorshift128 = Xorshift128::new(12345,67890);
 
-    println!("{sample:#?}")
+    for _ in 0..10 {
+        let temp: Xorshift128 = Xorshift128::next(&mut sample);
+        sample = temp;
+
+        println!("{sample:#?}")
+    }
 }
