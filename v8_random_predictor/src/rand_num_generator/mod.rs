@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct Xorshift128 {
-    state1: u64,
-    state2: u64,
+    pub state1: u64,
+    pub state2: u64,
 }
 
 impl Xorshift128 {

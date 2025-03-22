@@ -1,17 +1,22 @@
 use std::io::stdin;
 use v8_random_predictor::rand_num_generator::Xorshift128;
+use v8_random_predictor::rand_num_predictor::predictor;
 
-#[allow(unused)]
 fn main() {
     let mut state: Xorshift128 = Xorshift128::new(1233744567890, 3646874774744);
-    let command_tuple: (String, String) = (String::from("1"), String::from("2"));
 
     let mut command: String = String::from("");
     println! {"Kindly choose the operation. (random_number => 1/\"\", predict_number => 2, quit => exit)"};
 
     loop {
         command.clear();
-        stdin().read_line(&mut command);
+        match stdin().read_line(&mut command) {
+            Ok(_o) => {}
+            Err(e) => {
+                println!("An unexpected error occured. {e}");
+                command.push_str("exit")
+            }
+        };
 
         command = command.trim().to_string();
 
@@ -22,7 +27,16 @@ fn main() {
                 continue;
             }
             "2" => {
-                println!("Yet to implement");
+                match predictor(vec![0.2089244119096274f64, 0.5543277367964399f64, 0.7575345605035386f64]) {
+                    Ok(mut val) => {
+                        let random_num: f64 = val.next();
+                        println!("{random_num}");
+                    }
+                    Err(err) => {
+                        println!("Unexpected error occured. {err}");
+                        break;
+                    }
+                };
                 continue;
             }
             "exit" => break,
